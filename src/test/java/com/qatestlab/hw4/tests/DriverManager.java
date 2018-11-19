@@ -28,21 +28,18 @@ public class DriverManager {
      * @return an object to use browser
      */
     public static WebDriver getDriver(String browserName) {
-        switch(browserName.toLowerCase()) {
-            case "ff":
-            case "firefox":
-                System.setProperty("webdriver.firefox.driver", System.getProperty("user.dir") + "//resources//geckodriver.exe");
-                return new FirefoxDriver();
-            case "ie":
-            case "internet explorer":
-                System.setProperty("webdriver.ie.driver", System.getProperty("user.dir") + "//resources//IEDriverServer.exe");
-                return new InternetExplorerDriver();
-            case "chrome":
-            default:
-                System.setProperty(
-                        "webdriver.chrome.driver",
-                        new File(DriverManager.class.getResource("/chromedriver.exe").getFile()).getPath());
-                return new ChromeDriver();
+        String s = browserName.toLowerCase();
+        if (s.equals("ff") || s.equals("firefox")) {
+            System.setProperty("webdriver.firefox.driver", System.getProperty("user.dir") + "//resources//geckodriver.exe");
+            return new FirefoxDriver();
+        } else if (s.equals("ie") || s.equals("internet explorer")) {
+            System.setProperty("webdriver.ie.driver", System.getProperty("user.dir") + "//resources//IEDriverServer.exe");
+            return new InternetExplorerDriver();
+        } else {
+            System.setProperty(
+                    "webdriver.chrome.driver",
+                    new File(DriverManager.class.getResource("/chromedriver.exe").getFile()).getPath());
+            return new ChromeDriver();
         }
     }
 

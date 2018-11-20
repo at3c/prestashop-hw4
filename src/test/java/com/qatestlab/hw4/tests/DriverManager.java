@@ -36,9 +36,7 @@ public class DriverManager {
             System.setProperty("webdriver.ie.driver", System.getProperty("user.dir") + "//resources//IEDriverServer.exe");
             return new InternetExplorerDriver();
         } else {
-            System.setProperty(
-                    "webdriver.chrome.driver",
-                    new File(DriverManager.class.getResource("/chromedriver.exe").getFile()).getPath());
+            System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir") + "//resources//chromedriver.exe");
             return new ChromeDriver();
         }
     }
@@ -54,7 +52,7 @@ public class DriverManager {
      */
     public static EventFiringWebDriver getConfiguredDriver(String browserName) {
         EventFiringWebDriver driver = new EventFiringWebDriver(getDriver(browserName));
-        //driver.register(new TestEventHandler());
+        driver.register(new TestEventHandler());
 
         driver.manage().timeouts().implicitlyWait(30,  TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(60,  TimeUnit.SECONDS);

@@ -3,9 +3,12 @@ package com.qatestlab.hw4.tests;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.*;
+
+import javax.swing.*;
 
 /**
  * Created by Sydorenko B. on 19.11.2018.
@@ -46,17 +49,39 @@ public class CreateProduct {
     }
 
     @Test(dataProvider  = "getLoginPass", dataProviderClass = DataTest.class)
-    public void signIn(String login, String passwd) {
-        driver.get("http://prestashop-automation.qatestlab.com.ua/admin147ajyvk0/");
+    public void createTestProduct(String login, String passwd) {
 
         //find DOM elements and do actions
         WebElement loginInput = driver.findElement(By.id("email"));
-        loginInput.sendKeys("webinar.test@gmail.com");
+        loginInput.sendKeys(login);
 
         WebElement passwdInpute = driver.findElement(By.id("passwd"));
-        passwdInpute.sendKeys("Xcg7299bnSmMuRLp9ITw");
+        passwdInpute.sendKeys(passwd);
         passwdInpute.submit();
+
+        WebElement catalog = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@id='subtab-AdminCatalog']/a"))
+        );
+
+        Actions action = new Actions(driver);
+        action.moveToElement(catalog).build().perform();
+
+        WebElement categoryProduct = webDriverWaiter.until(
+                ExpectedConditions.elementToBeClickable(By.cssSelector("li#subtab-AdminProducts>a")));
+        categoryProduct.click();
+
+        WebElement addProduct = webDriverWaiter.until(
+                ExpectedConditions.elementToBeClickable(By.cssSelector("a#page-header-desc-configuration-add")));
+        addProduct.click();
+
+        webDriverWaiter.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//*")));
+
     }
+
+//    @Test
+//    public void checkTestProduct() {
+//
+//    }
 
 
 }

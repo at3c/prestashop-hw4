@@ -1,6 +1,7 @@
 package com.qatestlab.hw4.tests;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -9,6 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.*;
 
 import javax.swing.*;
+import java.util.function.Predicate;
+
 
 /**
  * Created by Sydorenko B. on 19.11.2018.
@@ -74,7 +77,13 @@ public class CreateProduct {
                 ExpectedConditions.elementToBeClickable(By.cssSelector("a#page-header-desc-configuration-add")));
         addProduct.click();
 
-        webDriverWaiter.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//*")));
+
+//        webDriverWaiter.until( new Predicate<WebDriver>() {
+//                        boolean test(WebDriver driver) {
+//                            return ((JavascriptExecutor)driver).executeScript("return document.readyState").equals("complete");
+//                        }
+//                    }
+//        );
 
     }
 

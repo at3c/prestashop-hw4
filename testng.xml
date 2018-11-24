@@ -2,8 +2,6 @@
 
 <suite name="Suite1" verbose="1" >
     <parameter name="browser" value="chrome" />
-    <parameter name="url" value="http://prestashop-automation.qatestlab.com.ua/ru/" />
-
     <test name="testA" >
         <classes>
             <class name="com.qatestlab.hw4.tests.CreateProduct"/>

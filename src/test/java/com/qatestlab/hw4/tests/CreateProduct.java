@@ -11,8 +11,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
+import java.util.List;
 import java.util.Random;
-
+import java.util.concurrent.TimeUnit;
 /**
  * Created by Sydorenko B. on 19.11.2018.
  */
@@ -35,21 +36,13 @@ public class CreateProduct {
 
     @AfterClass
     public void tearDown() {
-//        WebElement userMenu = webDriverWaiter.until(
-//                ExpectedConditions.presenceOfElementLocated(By.cssSelector("nav.main-header .person")));
-//        userMenu.click();
-//
-//        WebElement logout = webDriverWaiter.until(
-//                ExpectedConditions.elementToBeClickable(By.id("header_logout")));
-//        logout.click();
-
-        driver.quit();
+        //driver.quit();
     }
 
-    @Parameters({"url"})
+
     @BeforeMethod
-    public void prepareEnvironment(String url) {
-        driver.get(url);
+    public void prepareEnvironment() {
+
     }
 
     @AfterMethod
@@ -58,153 +51,145 @@ public class CreateProduct {
     }
 
     @Test(dataProvider = "getLoginPass", dataProviderClass = DataTest.class)
-    public void createTestProduct(String login, String passwd) {
+    public void createTestProduct(String login, String passwd) throws InterruptedException {
 
-        WebElement signInForm = driver.findElement(By.cssSelector("#_desktop_user_info a"));
-        signInForm.click();
+        driver.get("http://prestashop-automation.qatestlab.com.ua/admin147ajyvk0/");
 
         //find DOM elements and do actions
-        WebElement loginInput = webDriverWaiter.until(
-                ExpectedConditions.presenceOfElementLocated(By.cssSelector("input[name='email']")));
-        loginInput.sendKeys(login);
-
         WebElement loginInpute = webDriverWaiter.until(
-                ExpectedConditions.presenceOfElementLocated(By.cssSelector("inpute.form-control[name='email']")));
+                ExpectedConditions.presenceOfElementLocated(By.id("email")));
 
         loginInpute.clear();
         loginInpute.sendKeys(login);
 
-        WebElement passInpute = webDriverWaiter.until(
-                ExpectedConditions.presenceOfElementLocated(By.cssSelector("inpute.form-control[name='password']")));
-        passInpute.clear();
-        passInpute.sendKeys(passwd);
-        passInpute.submit();
+        WebElement passInput = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.id("passwd")));
+        passInput.clear();
+        passInput.sendKeys(passwd);
+        passInput.submit();
 
+        WebElement catalog = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector("#subtab-AdminCatalog > a")));
 
+        Actions action = new Actions(driver);
+        action.moveToElement(catalog).build().perform();
 
-//        WebElement passwdInpute = driver.findElement(By.id("passwd"));
-//        passwdInpute.sendKeys(passwd);
-//        passwdInpute.submit();
-//
-//        WebElement catalog = webDriverWaiter.until(
-//                ExpectedConditions.presenceOfElementLocated(By.cssSelector("li[data-submenu='9']>a"))
-//        );
-//
-//        Actions action = new Actions(driver);
-//        action.moveToElement(catalog).build().perform();
-//
-//        WebElement productSubCatalog = webDriverWaiter.until(
-//                ExpectedConditions.elementToBeClickable(By.cssSelector("li[data-submenu='10']>a")));
-//        productSubCatalog.click();
-//
-//        WebElement addProduct = webDriverWaiter.until(
-//                ExpectedConditions.elementToBeClickable(By.cssSelector("a#page-header-desc-configuration-add")));
-//        addProduct.click();
-//
-//        //create anonymous class with applay() method,
-//        // that check page load state and return Boolean value
-//        ExpectedCondition<Boolean> pageLoadCondition = new
-//                ExpectedCondition<Boolean>() {
-//                    public Boolean apply(WebDriver driver) {
-//                        return ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete");
-//                    }
-//                };
-//
-//        //waites untile load page
-//        webDriverWaiter.until(pageLoadCondition);
-//
-//        Random ran = new Random ();
-//
-//        WebElement nameProduct = driver.findElement(By.id("form_step1_name_1"));
-//        productName = "SBV_prod_" + ran.nextInt(1000);
-//        nameProduct.sendKeys(productName);
-//
-//        WebElement priceTab = driver.findElement(By.cssSelector("#tab_step2 > a"));
-//        priceTab.click();
-//
-//        WebElement priceProduct = webDriverWaiter.until(
-//                ExpectedConditions.presenceOfElementLocated(By.id("form_step2_price")));
-//
-//        randomPrice = ("" + ((double)(ran.nextInt(101))/10 + (double)ran.nextInt(91)));
-//        priceProduct.clear();
-//        priceProduct.sendKeys(randomPrice);
-//
-//        WebElement numberProduct = driver.findElement(By.cssSelector("#tab_step3 > a"));
-//        numberProduct.click();
-//
-//        WebElement numberProductInpute = webDriverWaiter.until(
-//                ExpectedConditions.presenceOfElementLocated(By.id("form_step3_qty_0")));
-//        randomNumber = "" + ran.nextInt(101);
-//        numberProductInpute.sendKeys(randomNumber);
-//
-//        WebElement btnSubmit = driver.findElement(By.cssSelector("button.js-btn-save"));
-//        btnSubmit.submit();
+        WebElement productSubCatalog = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector("#subtab-AdminProducts > a")));
+        productSubCatalog.click();
+
+        WebElement addProduct = webDriverWaiter.until(
+                ExpectedConditions.elementToBeClickable(By.cssSelector("a#page-header-desc-configuration-add")));
+        addProduct.click();
+
+        ExpectedCondition<Boolean> pageLoadCondition = pageLoadExpectd();
+
+        //waites untile load page
+        webDriverWaiter.until(pageLoadCondition);
+
+        Random ran = new Random ();
+
+        WebElement nameProduct = driver.findElement(By.id("form_step1_name_1"));
+        productName = "SBV_prod_" + ran.nextInt(1000);
+        nameProduct.sendKeys(productName);
+
+        WebElement priceTab = driver.findElement(By.cssSelector("#tab_step2 > a"));
+        priceTab.click();
+
+        WebElement priceProduct = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.id("form_step2_price")));
+
+        randomPrice = ("" + ((double)(ran.nextInt(101))/10 + (double)ran.nextInt(91))).replace(".",",") + "0";
+        priceProduct.clear();
+        priceProduct.sendKeys(randomPrice);
+
+        WebElement numberProduct = driver.findElement(By.cssSelector("#tab_step3 > a"));
+        numberProduct.click();
+
+        WebElement numberProductInpute = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.id("form_step3_qty_0")));
+        randomNumber = "" + ran.nextInt(101);
+        numberProductInpute.sendKeys(randomNumber);
+
+        WebElement switchStatus = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.className("switch-input ")));
+        switchStatus.click();
+
+        WebElement mssgActiveStatusClose = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector("#growls .growl-close")));
+        mssgActiveStatusClose.click();
+
+        WebElement btnSubmit = driver.findElement(By.cssSelector("button.js-btn-save"));
+        btnSubmit.submit();
+
+        webDriverWaiter.until(
+                ExpectedConditions.visibilityOfElementLocated(By.className("growl")));
+
+        WebElement mssgSubmitStatusClose = webDriverWaiter.until(
+                ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#growls .growl-close")));
+        mssgSubmitStatusClose.click();
+
+        Thread.sleep(1000);
+
+        //logOut from Admin panel
+        WebElement userMenu = webDriverWaiter.until(
+                ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".person i")));
+        userMenu.click();
+
+        WebElement logout = webDriverWaiter.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("header_logout")));
+        action.moveToElement(logout).build().perform();
+        logout.click();
+
     }
 
     @Test(dependsOnMethods = "createTestProduct")
     public void checkTestProduct() {
 
+        driver.get("http://prestashop-automation.qatestlab.com.ua/");
 
-//        driver = DriverManager.getConfiguredDriver("chrome");
-//        webDriverWaiter = new WebDriverWait(driver, 10);
-//
-//        driver.get("http://prestashop-automation.qatestlab.com.ua/admin147ajyvk0/");
-//
-//        //find DOM elements and do actions
-//        WebElement loginInput = driver.findElement(By.id("email"));
-//        loginInput.sendKeys("webinar.test@gmail.com");
-//
-//        WebElement passwdInpute = driver.findElement(By.id("passwd"));
-//        passwdInpute.sendKeys(" Xcg7299bnSmMuRLp9ITw");
-//        passwdInpute.submit();
 
-//        WebElement dashboard = driver.findElement(By.cssSelector("#tab-AdminDashboard"));
-//        dashboard.click();
-//
-//        WebElement catalog = webDriverWaiter.until(
-//                ExpectedConditions.presenceOfElementLocated(By.id("subtab-AdminCatalog"))
-//        );
-//
-//        Actions actions = new Actions(driver);
-//        actions.moveToElement(catalog).build().perform();
-//
-//        WebElement productSubCatalog = webDriverWaiter.until(
-//                ExpectedConditions.elementToBeClickable(By.id("subtab-AdminProducts")));
-//        productSubCatalog.click();
-//
-//        WebElement inputpProductFiltrName = driver.findElement(By.cssSelector("input.form-control[name='filter_column_name']"));
-//        inputpProductFiltrName.clear();
-//        inputpProductFiltrName.sendKeys(productName);
-//        inputpProductFiltrName.submit();
-//
-//        WebElement product = webDriverWaiter.until(
-//                ExpectedConditions.presenceOfElementLocated(By.cssSelector("tbody > tr > td:nth-child(3) > a")));
-//        Assert.assertEquals(product.getText(), productName);
-//        product.click();
-//
-//        WebElement nameProductAssert = webDriverWaiter.until(ExpectedConditions.presenceOfElementLocated(By.id("form_step1_name_1")));
-//        String nameProductAssertValue = nameProductAssert.getAttribute("value");
-//        Assert.assertEquals(nameProductAssertValue, productName, "Assert name failed");
-//
-//        WebElement numberProductAssert = driver.findElement(By.id("form_step1_qty_0_shortcut"));
-//        String numberProductAssertString = numberProductAssert.getAttribute("value");
-//        Assert.assertEquals(numberProductAssertString, randomNumber, "Assert quantity failed");
-//
-//        WebElement priceProductAssert = driver.findElement(By.id("form_step1_price_shortcut"));
-//        String priceProductAssertString = priceProductAssert.getAttribute("value");
-//        String priceExpected = (randomPrice + "00000").replace(".",",");
-//        Assert.assertEquals(priceProductAssertString, priceExpected, "Assert price failed");
+        WebElement allProducts =  webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.className("all-product-link")));
+        allProducts.click();
+
+        WebElement searchField = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector("form input[name='s']")));
+        searchField.sendKeys(productName);
+        searchField.submit();
+
+        ExpectedCondition<Boolean> pageLoadCondition = pageLoadExpectd();
+        //waites untile load page
+        webDriverWaiter.until(pageLoadCondition);
+
+        List<WebElement> addProducts = driver.findElements(By.linkText(productName));
+        Assert.assertTrue(true, "Didn't find new product");
+        addProducts.get(0).click();
+
+        WebElement nameProductActualWebElement = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector("h1[itemprop='name']")));
+        String nameProductActualString = nameProductActualWebElement.getText();
+        Assert.assertEquals(nameProductActualString.toLowerCase(), productName.toLowerCase(),
+                "Product name is not expected result");
+
+        WebElement quantitiesProductActualWebElement = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector(".product-quantities span")));
+        String quantitiesProductActualString = quantitiesProductActualWebElement.getText().replaceAll("[^0-9]","");
+        Assert.assertEquals(quantitiesProductActualString, randomNumber, "Quantitie is not expected result");
+
+        WebElement priceProductActualWebElement = webDriverWaiter.until(
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector(".current-price span")));
+        String priceProductActualString = priceProductActualWebElement.getText().replaceAll("[^0-9?!\\,]", "");
+        Assert.assertEquals(priceProductActualString, randomPrice, "Price is not expected result");
     }
 
-
-//    public static String getProductName() {
-//        String symbols = "1234567890";
-//        StringBuilder randString = new StringBuilder();
-//        int count = (int)(Math.random()*10);
-//        for(int i=0;i<count;i++)
-//            randString.append(symbols.charAt((int)(Math.random()*symbols.length())));
-//        return String.valueOf(randString);
-//    }
-
-
+    private ExpectedCondition<Boolean> pageLoadExpectd() {
+        ExpectedCondition<Boolean> pageLoadCondition = new
+                ExpectedCondition<Boolean>() {
+                    public Boolean apply(WebDriver driver) {
+                        return ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete");
+                    }
+                };
+        return pageLoadCondition;
+    }
 }

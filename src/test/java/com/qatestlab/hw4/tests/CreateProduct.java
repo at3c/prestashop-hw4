@@ -122,32 +122,15 @@ public class CreateProduct {
         WebElement btnSubmit = driver.findElement(By.cssSelector("button.js-btn-save"));
         btnSubmit.submit();
 
-        webDriverWaiter.until(
-                ExpectedConditions.visibilityOfElementLocated(By.className("growl")));
-
         WebElement mssgSubmitStatusClose = webDriverWaiter.until(
-                ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#growls .growl-close")));
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector("#growls .growl-close")));
         mssgSubmitStatusClose.click();
-
-        Thread.sleep(1000);
-
-        //logOut from Admin panel
-        WebElement userMenu = webDriverWaiter.until(
-                ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".person i")));
-        userMenu.click();
-
-        WebElement logout = webDriverWaiter.until(
-                ExpectedConditions.visibilityOfElementLocated(By.id("header_logout")));
-        action.moveToElement(logout).build().perform();
-        logout.click();
-
     }
 
     @Test(dependsOnMethods = "createTestProduct")
     public void checkTestProduct() {
 
         driver.get("http://prestashop-automation.qatestlab.com.ua/");
-
 
         WebElement allProducts =  webDriverWaiter.until(
                 ExpectedConditions.presenceOfElementLocated(By.className("all-product-link")));

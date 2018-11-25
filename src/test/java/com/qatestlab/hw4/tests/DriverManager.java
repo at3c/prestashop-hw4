@@ -30,7 +30,7 @@ public class DriverManager {
     public static WebDriver getDriver(String browserName) {
         String s = browserName.toLowerCase();
         if (s.equals("ff") || s.equals("firefox")) {
-            System.setProperty("webdriver.firefox.driver", System.getProperty("user.dir") + "//resources//geckodriver.exe");
+            System.setProperty("webdriver.geckodriver.driver", System.getProperty("user.dir") + "//resources//geckodriver.exe");
             return new FirefoxDriver();
         } else if (s.equals("ie") || s.equals("internet explorer")) {
             System.setProperty("webdriver.ie.driver", System.getProperty("user.dir") + "//resources//IEDriverServer.exe");

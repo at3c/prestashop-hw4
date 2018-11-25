@@ -56,6 +56,7 @@ public class DriverManager {
 
         driver.manage().timeouts().implicitlyWait(30,  TimeUnit.SECONDS);
         driver.manage().timeouts().pageLoadTimeout(60,  TimeUnit.SECONDS);
+        driver.manage().timeouts().setScriptTimeout(30, TimeUnit.SECONDS);
 
         driver.manage().window().maximize();
         return driver;

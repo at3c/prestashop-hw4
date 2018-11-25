@@ -13,7 +13,7 @@ import org.testng.annotations.*;
 
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
+
 /**
  * Created by Sydorenko B. on 19.11.2018.
  */
@@ -31,12 +31,12 @@ public class CreateProduct {
     @BeforeClass
     public void setUp(String browser) {
         driver = DriverManager.getConfiguredDriver(browser);
-        webDriverWaiter = new WebDriverWait(driver, 10);
+        webDriverWaiter = new WebDriverWait(driver, 10, 1000);
     }
 
     @AfterClass
     public void tearDown() {
-        //driver.quit();
+        driver.quit();
     }
 
 
@@ -115,15 +115,15 @@ public class CreateProduct {
                 ExpectedConditions.presenceOfElementLocated(By.className("switch-input ")));
         switchStatus.click();
 
-        WebElement mssgActiveStatusClose = webDriverWaiter.until(
-                ExpectedConditions.presenceOfElementLocated(By.cssSelector("#growls .growl-close")));
+        WebElement mssgActiveStatusClose = webDriverWaiter.withMessage("Activate message aren't located").until(
+                ExpectedConditions.presenceOfElementLocated(By.className("growl-close")));
         mssgActiveStatusClose.click();
 
         WebElement btnSubmit = driver.findElement(By.cssSelector("button.js-btn-save"));
         btnSubmit.submit();
 
-        WebElement mssgSubmitStatusClose = webDriverWaiter.until(
-                ExpectedConditions.presenceOfElementLocated(By.cssSelector("#growls .growl-close")));
+        WebElement mssgSubmitStatusClose = webDriverWaiter.withMessage("Save message aren't located").until(
+                ExpectedConditions.presenceOfElementLocated(By.className("growl-close")));
         mssgSubmitStatusClose.click();
     }
 
@@ -136,17 +136,18 @@ public class CreateProduct {
                 ExpectedConditions.presenceOfElementLocated(By.className("all-product-link")));
         allProducts.click();
 
+        ExpectedCondition<Boolean> pageLoadCondition = pageLoadExpectd();
+        //waites untile load page
+        webDriverWaiter.until(pageLoadCondition);
+
         WebElement searchField = webDriverWaiter.until(
                 ExpectedConditions.presenceOfElementLocated(By.cssSelector("form input[name='s']")));
         searchField.sendKeys(productName);
         searchField.submit();
 
-        ExpectedCondition<Boolean> pageLoadCondition = pageLoadExpectd();
-        //waites untile load page
-        webDriverWaiter.until(pageLoadCondition);
-
         List<WebElement> addProducts = driver.findElements(By.linkText(productName));
-        Assert.assertTrue(true, "Didn't find new product");
+
+        Assert.assertFalse(addProducts.isEmpty(), "Didn't find new product");
         addProducts.get(0).click();
 
         WebElement nameProductActualWebElement = webDriverWaiter.until(
